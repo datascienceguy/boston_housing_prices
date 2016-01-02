@@ -9,7 +9,7 @@ from sklearn.tree import DecisionTreeRegressor
 ################################
 ### ADD EXTRA LIBRARIES HERE ###
 ################################
-
+from sklearn.cross_validation import train_test_split
 
 def load_data():
     """Load the Boston dataset."""
@@ -69,6 +69,13 @@ def split_data(city_data):
     ###################################
     ### Step 2. YOUR CODE GOES HERE ###
     ###################################
+
+    # If random_state is specified, results will be "random" but the same every time
+    # for reproducible results.
+    # In production environments, do not use random_state, so split is actually random
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, train_size=0.7, test_size=0.3, random_state=47
+    )
 
     return X_train, y_train, X_test, y_test
 
@@ -209,10 +216,10 @@ def main():
 
     # Explore the data
     explore_city_data(city_data)
-    return
 
     # Training/Test dataset split
     X_train, y_train, X_test, y_test = split_data(city_data)
+    return
 
     # Learning Curve Graphs
     max_depths = [1,2,3,4,5,6,7,8,9,10]
