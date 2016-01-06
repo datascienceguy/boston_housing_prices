@@ -10,6 +10,7 @@ from sklearn.tree import DecisionTreeRegressor
 ### ADD EXTRA LIBRARIES HERE ###
 ################################
 from sklearn.cross_validation import train_test_split
+from sklearn import metrics
 # Added this import because import pylab as pl was causing this error:
 # AttributeError: 'module' object has no attribute 'figure'
 # This may be a local env issue I was having, but modified to get graphs to work
@@ -94,7 +95,17 @@ def performance_metric(label, prediction):
 
     # The following page has a table of scoring functions in sklearn:
     # http://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics
-    pass
+
+    ###################################
+    # a) Can't use a classification scoring metric since the data is continuous
+    #    Must use a regression scoring metric.
+    # b) Mean squared error is more sensitive to outliers than the absolute error
+    #    because it squares the residual difference between the predicted and expected values
+    ###################################
+
+    # return metrics.explained_variance_score(label, prediction)
+    # return metrics.mean_absolute_error(label, prediction)
+    return metrics.r2_score(label, prediction)
 
 
 def learning_curve(depth, X_train, y_train, X_test, y_test):
@@ -229,7 +240,6 @@ def main():
     max_depths = [1,2,3,4,5,6,7,8,9,10]
     for max_depth in max_depths:
         learning_curve(max_depth, X_train, y_train, X_test, y_test)
-    return
 
     # Model Complexity Graph
     model_complexity(X_train, y_train, X_test, y_test)
