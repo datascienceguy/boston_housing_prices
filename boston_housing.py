@@ -18,6 +18,8 @@ from sklearn.metrics import make_scorer
 # This may be a local env issue I was having, but modified to get graphs to work
 import matplotlib.pyplot as pl
 
+# FOR TESTING
+from pprint import pprint
 
 def load_data():
     """Load the Boston dataset."""
@@ -210,20 +212,41 @@ def fit_predict_model(city_data):
     # obtain the parameters that generate the best training performance. Set up
     # the grid search object here.
     # http://scikit-learn.org/stable/modules/generated/sklearn.grid_search.GridSearchCV.html#sklearn.grid_search.GridSearchCV
+
+    # FOR TESTING
+    cv_ranges = [2,3,5,10,15,20,25,30,35]
+    num_times_run_cv = 10
+    prices = {}
+    all_max_depths = {}
+
     scorer = make_scorer(performance_metric, greater_is_better=False)
-    reg = GridSearchCV(regressor, parameters, scorer, cv=20)
 
+    # FOR TESTING
+    for cv_range in cv_ranges:
+        prices[cv_range] = []
+        all_max_depths[cv_range] = []
+        for i in range(num_times_run_cv):
 
-    # Fit the learner to the training data to obtain the best parameter set
-    print "Final Model: "
-    print reg.fit(X, y)
-    print reg.best_estimator_
+            # Fit the learner to the training data to obtain the best parameter set
+            # print "Final Model: "
+            # print reg.fit(X, y)
+            # print reg.best_estimator_
 
-    # Use the model to predict the output of a particular sample
-    x = [11.95, 0.00, 18.100, 0, 0.6590, 5.6090, 90.00, 1.385, 24, 680.0, 20.20, 332.09, 12.13]
-    y = reg.predict(x)
-    print "House: " + str(x)
-    print "Prediction: " + str(y)
+            # Use the model to predict the output of a particular sample
+            x = [11.95, 0.00, 18.100, 0, 0.6590, 5.6090, 90.00, 1.385, 24, 680.0, 20.20, 332.09, 12.13]
+            # y = reg.predict(x)
+            # print "House: " + str(x)
+            # print "Prediction: " + str(y)
+
+            # FOR TESTING
+            reg = GridSearchCV(regressor, parameters, scorer, cv=cv_range)
+            reg.fit(X,y)
+            newY = reg.predict(x)
+            prices[cv_range].append(newY[0])
+            all_max_depths[cv_range].append(reg.best_estimator_.max_depth)
+
+    pprint(prices)
+    pprint(all_max_depths)
 
     # In the case of the documentation page for GridSearchCV, it might be the case that the example is just a demonstration of syntax for use of the function, rather than a statement about
 def main():
