@@ -11,6 +11,8 @@ from sklearn.tree import DecisionTreeRegressor
 ################################
 from sklearn.cross_validation import train_test_split
 from sklearn import metrics
+from sklearn.grid_search import GridSearchCV
+from sklearn.metrics import make_scorer
 # Added this import because import pylab as pl was causing this error:
 # AttributeError: 'module' object has no attribute 'figure'
 # This may be a local env issue I was having, but modified to get graphs to work
@@ -103,9 +105,7 @@ def performance_metric(label, prediction):
     #    because it squares the residual difference between the predicted and expected values
     ###################################
 
-    # return metrics.explained_variance_score(label, prediction)
-    # return metrics.mean_absolute_error(label, prediction)
-    return metrics.r2_score(label, prediction)
+    return metrics.mean_squared_error(label, prediction)
 
 
 def learning_curve(depth, X_train, y_train, X_test, y_test):
@@ -210,10 +210,14 @@ def fit_predict_model(city_data):
     # obtain the parameters that generate the best training performance. Set up
     # the grid search object here.
     # http://scikit-learn.org/stable/modules/generated/sklearn.grid_search.GridSearchCV.html#sklearn.grid_search.GridSearchCV
+    scorer = make_scorer(performance_metric, greater_is_better=False)
+    reg = GridSearchCV(regressor, parameters, scorer, cv=20)
+
 
     # Fit the learner to the training data to obtain the best parameter set
     print "Final Model: "
     print reg.fit(X, y)
+    print reg.best_estimator_
 
     # Use the model to predict the output of a particular sample
     x = [11.95, 0.00, 18.100, 0, 0.6590, 5.6090, 90.00, 1.385, 24, 680.0, 20.20, 332.09, 12.13]
@@ -237,12 +241,12 @@ def main():
     X_train, y_train, X_test, y_test = split_data(city_data)
 
     # Learning Curve Graphs
-    max_depths = [1,2,3,4,5,6,7,8,9,10]
-    for max_depth in max_depths:
-        learning_curve(max_depth, X_train, y_train, X_test, y_test)
-
-    # Model Complexity Graph
-    model_complexity(X_train, y_train, X_test, y_test)
+    # max_depths = [1,2,3,4,5,6,7,8,9,10]
+    # for max_depth in max_depths:
+    #     learning_curve(max_depth, X_train, y_train, X_test, y_test)
+    #
+    # # Model Complexity Graph
+    # model_complexity(X_train, y_train, X_test, y_test)
 
     # Tune and predict Model
     fit_predict_model(city_data)
